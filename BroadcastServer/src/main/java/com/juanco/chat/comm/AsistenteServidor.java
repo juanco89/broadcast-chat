@@ -1,6 +1,9 @@
 
 package com.juanco.chat.comm;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -18,19 +21,36 @@ public class AsistenteServidor implements Runnable {
 
     private final Socket socket;
     
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    
     public AsistenteServidor(Socket socket) {
         this.socket = socket;
         
-        // TODO: Obtener streams
+        try {
+            in = new ObjectInputStream(this.socket.getInputStream());
+            out = new ObjectOutputStream(this.socket.getOutputStream());
+        } catch (IOException e) {
+            in = null;
+            out = null;
+        }
     }
     
     @Override
     public void run() {
-        // La ejecucion en paralelo está encargada de la escucha por el socket.
+        while(socket.isConnected()) {
+            try {
+                String mensaje = in.readUTF();
+                
+                // TODO: Notificar del mensaje recibido.
+            } catch (IOException ex) { }
+        }
     }
     
     public void enviar(String mensaje) {
-        
+        try {
+            out.writeUTF(mensaje);
+        } catch (IOException ex) { }
     }
     
     public Socket getSocket() {
