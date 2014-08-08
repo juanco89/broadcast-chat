@@ -12,25 +12,28 @@ import com.juanco.chat.ui.VentanaServidor;
 public class Controlador {
     
     // Instancia del servidor
-    private final Servidor servidor;
+    private Servidor servidor;
     private final VentanaServidor vista;
     
     public Controlador() {
-        vista = new VentanaServidor();
+        vista = new VentanaServidor(this);
         vista.setVisible(true);
-        
-        int puerto = 6655;
-        
-        servidor = new Servidor(puerto);
     }
     
-    public boolean iniciarServidor() {
-        servidor.start();
-        return servidor.isServerRunning();
+    public boolean iniciarServidor(int puerto) {
+        if(servidor == null || !servidor.isAlive()) {
+            servidor = new Servidor(puerto);
+            servidor.start();
+            return servidor.isServerRunning();
+        }
+        return false;
     }
     
     public boolean detenerServidor() {
-        servidor.detener();
-        return !servidor.isServerRunning();
+        if(servidor != null) {
+            servidor.detener();
+            return !servidor.isServerRunning();
+        }
+        return false;
     }
 }
