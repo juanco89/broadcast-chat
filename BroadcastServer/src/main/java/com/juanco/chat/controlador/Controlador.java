@@ -2,6 +2,7 @@
 package com.juanco.chat.controlador;
 
 import com.juanco.chat.comm.Servidor;
+import com.juanco.chat.ui.VentanaServidor;
 
 /**
  * Controlador de la aplicación.
@@ -12,8 +13,12 @@ public class Controlador {
     
     // Instancia del servidor
     private final Servidor servidor;
+    private final VentanaServidor vista;
     
     public Controlador() {
+        vista = new VentanaServidor();
+        vista.setVisible(true);
+        
         int puerto = 6655;
         
         servidor = new Servidor(puerto);
