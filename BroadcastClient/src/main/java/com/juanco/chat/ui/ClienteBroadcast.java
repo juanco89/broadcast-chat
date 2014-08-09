@@ -6,6 +6,8 @@ import com.juanco.chat.Global;
 import com.juanco.chat.comm.ObservadorCom;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -54,6 +56,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
         txPuerto.setSelectionEnd(txPuerto.getText().length());
         contenedorConfig.add(txPuerto);
         btConectar = new JButton("Conectar");
+        btConectar.addActionListener(accionConectar);
         contenedorConfig.add(btConectar);
         contenedor.add(contenedorConfig);
         
@@ -122,6 +125,14 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
     private JTextArea txSalida;
     
     private Controlador controlador;
+    
+    private ActionListener accionConectar = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            controlador.conectar(txHost.getText(), Integer.valueOf(txPuerto.getText()));
+        }
+    };
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
