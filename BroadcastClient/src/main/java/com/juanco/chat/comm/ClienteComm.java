@@ -2,9 +2,9 @@
 package com.juanco.chat.comm;
 
 import com.juanco.chat.util.Logg;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -12,11 +12,11 @@ import java.net.Socket;
  * 
  * @author Juan C. Orozco <juanco89@gmail.com>
  */
-public class ClienteComm implements Runnable {
+public class ClienteComm extends Thread {
 
     private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private DataInputStream in;
+    private DataOutputStream out;
     
     private final String host;
     private final int puerto;
@@ -32,9 +32,12 @@ public class ClienteComm implements Runnable {
     public void conectar() {
         try {
             socket = new Socket(host, puerto);
-            in = new ObjectInputStream(socket.getInputStream());
-            out = new ObjectOutputStream(socket.getOutputStream());
-            
+            Logg.registrar("Conectado a " + socket.getRemoteSocketAddress());
+            if(socket.isConnected()) {
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+                this.start();
+            }
         }catch(IOException e) {
             Logg.registrar(e.getLocalizedMessage());
         }
@@ -57,7 +60,6 @@ public class ClienteComm implements Runnable {
                 if(observador != null) observador.nuevoMensajeRecibido(mensaje);
                 
             } catch (IOException ex) { }
-            
         }
     }
     

@@ -11,7 +11,7 @@ import com.juanco.chat.comm.ObservadorCom;
  */
 public class Controlador {
     
-    private ObservadorCom vista;
+    private final ObservadorCom vista;
     private ClienteComm cliente;
     
     public Controlador(ObservadorCom observardor) {
@@ -22,7 +22,6 @@ public class Controlador {
         if(cliente == null) {
             cliente = new ClienteComm(host, puerto, vista);
             cliente.conectar();
-            new Thread(cliente).start();
             return true;
         }
         return false;
@@ -32,7 +31,11 @@ public class Controlador {
         return false;
     }
     
-    public boolean enviarMensaje() {
+    public boolean enviarMensaje(String mensaje) {
+        if(cliente != null) {
+            cliente.enviar(mensaje);
+            return true;
+        }
         return false;
     }
 }

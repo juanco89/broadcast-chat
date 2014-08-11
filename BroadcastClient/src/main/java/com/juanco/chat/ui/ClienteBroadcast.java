@@ -63,6 +63,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
         // Contenedor de comunicación
         Box contenedorCom = Box.createHorizontalBox();
         btEnviar = new JButton("Enviar");
+        btEnviar.addActionListener(accionEnviar);
         txMensaje = new JTextField();
         txMensaje.setMaximumSize(new Dimension(this.getHeight() - btEnviar.getHeight(), 30));
         contenedorCom.add(txMensaje);
@@ -126,11 +127,23 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
     
     private Controlador controlador;
     
-    private ActionListener accionConectar = new ActionListener() {
+    private final ActionListener accionConectar = new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             controlador.conectar(txHost.getText(), Integer.valueOf(txPuerto.getText()));
+        }
+    };
+    
+    private final ActionListener accionEnviar = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if(!txMensaje.getText().isEmpty()) {
+                controlador.enviarMensaje(txMensaje.getText());
+                txSalida.append(txMensaje.getText() + "\n");
+                txMensaje.setText("");
+            }
         }
     };
     
