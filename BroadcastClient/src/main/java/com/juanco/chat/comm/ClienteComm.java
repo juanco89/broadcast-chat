@@ -34,6 +34,7 @@ public class ClienteComm extends Thread {
             socket = new Socket(host, puerto);
             Logg.registrar("Conectado a " + socket.getRemoteSocketAddress());
             if(socket.isConnected()) {
+                if(observador != null) observador.conexionExitosa();
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
                 this.start();
@@ -48,7 +49,9 @@ public class ClienteComm extends Thread {
         try {
             out.writeUTF(mensaje);
             return true;
-        } catch (IOException ex) { }
+        } catch (IOException ex) {
+            Logg.registrar(ex.getLocalizedMessage());
+        }
         return false;
     }
     
@@ -59,7 +62,9 @@ public class ClienteComm extends Thread {
                 String mensaje = in.readUTF();
                 if(observador != null) observador.nuevoMensajeRecibido(mensaje);
                 
-            } catch (IOException ex) { }
+            } catch (IOException ex) {
+                Logg.registrar(ex.getLocalizedMessage());
+            }
         }
     }
     

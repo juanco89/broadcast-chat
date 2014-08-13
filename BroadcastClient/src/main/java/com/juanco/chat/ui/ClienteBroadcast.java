@@ -4,8 +4,10 @@ package com.juanco.chat.ui;
 import com.juanco.chat.controlador.Controlador;
 import com.juanco.chat.Global;
 import com.juanco.chat.comm.ObservadorCom;
+import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -14,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -23,6 +26,9 @@ import javax.swing.JTextField;
  */
 public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCom {
 
+    private static final String CONFIG_CARD = "CONFIG_CARD";
+    private static final String MSN_CARD = "MSN_CARD";
+    
     public ClienteBroadcast() {
         initComponents();
         
@@ -34,47 +40,69 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
     }
 
     private void crearComponentesUI() {
-        Container contenedor = getContentPane();
-        contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
-        
-        // Controles para configurar conexión
-        Box contenedorConfig = Box.createHorizontalBox();
-        contenedorConfig.add(new JLabel("Host: "));
+        // Controles para configurar conexión.
+        Box contServidor = Box.createHorizontalBox();
         txHost = new JTextField("localhost");
         txHost.setPreferredSize(new Dimension(this.getWidth() / 3, 30));
         txHost.setMinimumSize(txHost.getPreferredSize());
         txHost.setMaximumSize(txHost.getPreferredSize());
-        txHost.setSelectionStart(0);
-        txHost.setSelectionEnd(txHost.getText().length());
-        contenedorConfig.add(txHost);
-        contenedorConfig.add(new JLabel("Puerto: "));
+//        txHost.setSelectionStart(0);
+//        txHost.setSelectionEnd(txHost.getText().length());
         txPuerto = new JTextField(Global.PUERTO_DEFAULT);
         txPuerto.setPreferredSize(new Dimension(this.getWidth() / 4, 30));
         txPuerto.setMinimumSize(txPuerto.getPreferredSize());
         txPuerto.setMaximumSize(txPuerto.getPreferredSize());
-        txPuerto.setSelectionStart(0);
-        txPuerto.setSelectionEnd(txPuerto.getText().length());
-        contenedorConfig.add(txPuerto);
+        contServidor.add(new JLabel("Host: "));
+        contServidor.add(txHost);
+        contServidor.add(Box.createRigidArea(new Dimension(30, 0)));
+        contServidor.add(new JLabel("Puerto: "));
+        contServidor.add(txPuerto);
+        // Contenedor para el nickname
+        Box contNickname = Box.createHorizontalBox();
+        txNickname = new JTextField();
+        txNickname.setPreferredSize(new Dimension(this.getWidth() / 2, 30));
+        txNickname.setMinimumSize(txNickname.getPreferredSize());
+        txNickname.setMaximumSize(txNickname.getPreferredSize());
+        txNickname.requestFocus();
+        // Botón de acción para conectar al servidor.
         btConectar = new JButton("Conectar");
         btConectar.addActionListener(accionConectar);
-        contenedorConfig.add(btConectar);
-        contenedor.add(contenedorConfig);
+        // agregar componentes al contenedor
+        contNickname.add(new Label("Nombre: "));
+        contNickname.add(txNickname);
+        contNickname.add(Box.createRigidArea(new Dimension(30, 0)));
+        contNickname.add(btConectar);
+        // Contenedor para la configuración y la conexión al servidor.
+        JPanel panelConf = new JPanel();
+        panelConf.setLayout(new BoxLayout(panelConf, BoxLayout.Y_AXIS));
+        panelConf.add(contServidor);
+        panelConf.add(contNickname);
+        panelConf.add(Box.createGlue());
         
         // Contenedor de comunicación
-        Box contenedorCom = Box.createHorizontalBox();
+        Box contMsn = Box.createHorizontalBox();
         btEnviar = new JButton("Enviar");
         btEnviar.addActionListener(accionEnviar);
         txMensaje = new JTextField();
         txMensaje.setMaximumSize(new Dimension(this.getHeight() - btEnviar.getHeight(), 30));
-        contenedorCom.add(txMensaje);
-        contenedorCom.add(Box.createHorizontalStrut(50));
-        contenedorCom.add(btEnviar);
-        contenedor.add(contenedorCom);
+        contMsn.add(txMensaje);
+        contMsn.add(Box.createHorizontalStrut(50));
+        contMsn.add(btEnviar);
         
-        txSalida = new JTextArea();
-        txSalida.setEnabled(false);
-        txSalida.setBorder(BorderFactory.createEtchedBorder());
-        contenedor.add(txSalida);
+        txConsola = new JTextArea();
+        txConsola.setEnabled(false);
+        txConsola.setBorder(BorderFactory.createEtchedBorder());
+        
+        JPanel panelMsn = new JPanel();
+        panelMsn.setLayout(new BoxLayout(panelMsn, BoxLayout.Y_AXIS));
+        panelMsn.add(contMsn);
+        panelMsn.add(txConsola);
+        
+        // Contenedor principal.
+        Container contenedor = getContentPane();
+        contenedor.setLayout(new CardLayout());
+        contenedor.add(panelConf, CONFIG_CARD);
+        contenedor.add(panelMsn, MSN_CARD);
     }
     
     public void setControlador(Controlador c) {
@@ -85,17 +113,19 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
     
     @Override
     public void conexionExitosa() {
-        txSalida.append("[*] Conectado al servidor\n");
+        txConsola.append("[*] Conectado al servidor\n");
+        CardLayout cl = (CardLayout) getContentPane().getLayout();
+        cl.show(getContentPane(), MSN_CARD);
     }
 
     @Override
     public void nuevoMensajeRecibido(String msn) {
-        txSalida.append("[-] Usuario dice: " + msn + "\n");
+        txConsola.append("[-] Usuario dice: " + msn + "\n");
     }
 
     @Override
     public void conexionTerminada() {
-        txSalida.append("[*] Terminando conexión\n");
+        txConsola.append("[*] Terminando conexión\n");
     }
     
     @SuppressWarnings("unchecked")
@@ -120,10 +150,11 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
     
     private JTextField txPuerto;
     private JTextField txHost;
+    private JTextField txNickname;
     private JButton btConectar;
     private JTextField txMensaje;
     private JButton btEnviar;
-    private JTextArea txSalida;
+    private JTextArea txConsola;
     
     private Controlador controlador;
     
@@ -141,7 +172,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
         public void actionPerformed(ActionEvent ae) {
             if(!txMensaje.getText().isEmpty()) {
                 controlador.enviarMensaje(txMensaje.getText());
-                txSalida.append(txMensaje.getText() + "\n");
+                txConsola.append(txMensaje.getText() + "\n");
                 txMensaje.setText("");
             }
         }
