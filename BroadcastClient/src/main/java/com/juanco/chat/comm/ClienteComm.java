@@ -4,6 +4,7 @@ package com.juanco.chat.comm;
 import com.juanco.chat.util.Logg;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -66,8 +67,16 @@ public class ClienteComm extends Thread {
                 
             } catch (IOException ex) {
                 Logg.registrar(ex.getLocalizedMessage());
+                
+                if(ex instanceof EOFException) {
+                    try {
+                        socket.close();
+                    } catch (IOException ex1) { }
+                    break;
+                }
             }
         }
+        if(observador != null) observador.conexionTerminada();
     }
     
 }

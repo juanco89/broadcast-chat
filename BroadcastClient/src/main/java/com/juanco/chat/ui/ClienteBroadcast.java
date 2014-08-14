@@ -125,6 +125,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
 
     @Override
     public void conexionTerminada() {
+        btEnviar.enable(false);
         txConsola.append("[*] Terminando conexión\n");
     }
     
