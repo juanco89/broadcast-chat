@@ -120,7 +120,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
 
     @Override
     public void nuevoMensajeRecibido(String msn) {
-        txConsola.append("[-] Usuario dice: " + msn + "\n");
+        txConsola.append("+ " + msn + "\n");
     }
 
     @Override
@@ -162,7 +162,11 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            controlador.conectar(txHost.getText(), Integer.valueOf(txPuerto.getText()));
+            // Validaciones de campos
+            if(txHost.getText().isEmpty() || txPuerto.getText().isEmpty() || txNickname.getText().isEmpty())
+                return;
+            
+            controlador.conectar(txHost.getText(), Integer.valueOf(txPuerto.getText()), txNickname.getText());
         }
     };
     
@@ -172,7 +176,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
         public void actionPerformed(ActionEvent ae) {
             if(!txMensaje.getText().isEmpty()) {
                 controlador.enviarMensaje(txMensaje.getText());
-                txConsola.append(txMensaje.getText() + "\n");
+                txConsola.append("+ [Yo]: " + txMensaje.getText() + "\n");
                 txMensaje.setText("");
             }
         }

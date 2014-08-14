@@ -28,12 +28,17 @@ public class AsistenteServidor implements Runnable {
     
     private final Servidor servidor;
     
+    private String nickname;
+    
     public AsistenteServidor(Socket socket, Servidor padre) {
         this.socket = socket;
         
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            
+            // Recibir el nickname.
+            nickname = in.readUTF();
         } catch (IOException e) {
             in = null;
             out = null;
@@ -46,7 +51,7 @@ public class AsistenteServidor implements Runnable {
         while(socket.isConnected() && !socket.isInputShutdown()) {
             try {
                 String mensaje = in.readUTF();
-                Logg.registrar(mensaje);
+                Logg.registrar(nickname + " dice: " + mensaje);
                 if(servidor != null) servidor.difundirMensaje(mensaje, this);
             } catch (IOException ex) {
                 Logg.registrar(ex.getMessage());
@@ -69,5 +74,9 @@ public class AsistenteServidor implements Runnable {
     
     public Socket getSocket() {
         return this.socket;
+    }
+    
+    public String getNickname() {
+        return this.nickname;
     }
 }

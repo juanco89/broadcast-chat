@@ -18,10 +18,10 @@ public class Controlador {
         vista = observardor;
     }
     
-    public boolean conectar(String host, int puerto) {
+    public boolean conectar(String host, int puerto, String nickname) {
         if(cliente == null) {
             cliente = new ClienteComm(host, puerto, vista);
-            cliente.conectar();
+            cliente.conectar(nickname);
             return true;
         }
         return false;

@@ -32,7 +32,8 @@ public class Controlador {
     
     public boolean detenerServidor() {
         if(servidor != null) {
-            servidor.detener();
+            if(servidor.isServerRunning())
+                servidor.detener();
             return !servidor.isServerRunning();
         }
         return false;

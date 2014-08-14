@@ -82,9 +82,9 @@ public class Servidor extends Thread {
     public void difundirMensaje(String mensaje, AsistenteServidor sender) {
         for(AsistenteServidor asistente: clientesConectados) {
             if(asistente != sender)
-                asistente.enviar(mensaje);
+                asistente.enviar("[" + sender.getNickname() + " dice]: " + mensaje);
         }
-        if(observador != null) observador.nuevoMensajeRecibido(mensaje);
+        if(observador != null) observador.nuevoMensajeRecibido("[" + sender.getNickname() + " dice]: " + mensaje);
     }
     
     public void eliminarClienteConectado(AsistenteServidor asistente) {

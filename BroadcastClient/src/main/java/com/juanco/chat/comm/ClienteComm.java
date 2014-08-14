@@ -29,7 +29,7 @@ public class ClienteComm extends Thread {
         this.observador = observador;
     }
     
-    public void conectar() {
+    public void conectar(String nickname) {
         try {
             socket = new Socket(host, puerto);
             Logg.registrar("Conectado a " + socket.getRemoteSocketAddress());
@@ -37,6 +37,7 @@ public class ClienteComm extends Thread {
                 if(observador != null) observador.conexionExitosa();
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
+                enviar(nickname);
                 this.start();
             }
         }catch(IOException e) {
@@ -48,6 +49,7 @@ public class ClienteComm extends Thread {
     public boolean enviar(String mensaje) {
         try {
             out.writeUTF(mensaje);
+            out.flush();
             return true;
         } catch (IOException ex) {
             Logg.registrar(ex.getLocalizedMessage());
