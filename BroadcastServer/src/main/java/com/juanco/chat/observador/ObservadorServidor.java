@@ -12,7 +12,7 @@ public interface ObservadorServidor {
     
     public void clienteDesconectado();
     
-    public void nuevoMensajeRecibido();
+    public void nuevoMensajeRecibido(String msn);
     
     public void conexionTerminada();
 }

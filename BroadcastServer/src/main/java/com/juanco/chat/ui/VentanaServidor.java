@@ -78,22 +78,27 @@ public class VentanaServidor extends javax.swing.JFrame implements ObservadorSer
     
     @Override
     public void servidorIniciado() {
+        txSalida.append("[x] Se inició el servidor escuchando en el puerto " + txPuerto.getText() + "\n");
     }
     
     @Override
     public void nuevoClienteConectado() {
+        txSalida.append("[x] Nuevo cliente conectado.\n");
     }
     
     @Override
-    public void nuevoMensajeRecibido() {
+    public void nuevoMensajeRecibido(String msn) {
+        txSalida.append("[x] Cliente dice: " + msn + "\n");
     }
     
     @Override
     public void conexionTerminada() {
+        txSalida.append("[x] Apagando el servidor ...\n");
     }
     
     @Override
     public void clienteDesconectado() {
+        txSalida.append("[x] Se termina la conexión con un cliente\n");
     }
     
     @SuppressWarnings("unchecked")
