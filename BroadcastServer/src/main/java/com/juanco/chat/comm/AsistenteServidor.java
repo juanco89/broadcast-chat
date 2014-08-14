@@ -1,9 +1,11 @@
 
 package com.juanco.chat.comm;
 
+import com.juanco.chat.util.Logg;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -21,29 +23,36 @@ public class AsistenteServidor implements Runnable {
 
     private final Socket socket;
     
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private DataInputStream in;
+    private DataOutputStream out;
     
-    public AsistenteServidor(Socket socket) {
+    private Servidor servidor;
+    
+    public AsistenteServidor(Socket socket, Servidor padre) {
         this.socket = socket;
         
         try {
-            in = new ObjectInputStream(this.socket.getInputStream());
-            out = new ObjectOutputStream(this.socket.getOutputStream());
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             in = null;
             out = null;
         }
+        this.servidor = padre;
     }
     
     @Override
     public void run() {
-        while(socket.isConnected()) {
+        while(socket.isConnected() && !socket.isInputShutdown()) {
             try {
                 String mensaje = in.readUTF();
-                
-                // TODO: Notificar del mensaje recibido.
-            } catch (IOException ex) { }
+                Logg.registrar(mensaje);
+                if(servidor != null) servidor.difundirMensaje(mensaje, this);
+            } catch (IOException ex) {
+                Logg.registrar(ex.getMessage());
+                if(ex instanceof EOFException)
+                    break;
+            }
         }
     }
     

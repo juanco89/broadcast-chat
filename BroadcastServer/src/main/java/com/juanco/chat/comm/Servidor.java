@@ -17,8 +17,8 @@ import java.util.List;
 public class Servidor extends Thread {
     
     private final int puerto;
-    private ServerSocket servidor;
     private boolean alive;
+    private ServerSocket servidor;
     private List<AsistenteServidor> clientesConectados;
     
     private ObsevadorServidor observador;
@@ -52,7 +52,11 @@ public class Servidor extends Thread {
                 Socket cliente = servidor.accept();
                 Logg.registrar("[*] Cliente conectado");
                 
-                AsistenteServidor asistente = new AsistenteServidor(cliente);
+                // Se crea hilo de escucha para el nuevo socket cliente.
+                AsistenteServidor asistente = new AsistenteServidor(cliente, this);
+                new Thread(asistente).start();
+                
+                // Se almacena referencia al asistente con el nuevo cliente.
                 clientesConectados.add(asistente);
                 
             }catch(IOException e) {
@@ -74,5 +78,12 @@ public class Servidor extends Thread {
     
     public void establecerObservador(ObsevadorServidor pObservador) {
         this.observador = pObservador;
+    }
+    
+    public void difundirMensaje(String mensaje, AsistenteServidor sender) {
+        for(AsistenteServidor asistente: clientesConectados) {
+            if(asistente != sender)
+                asistente.enviar(mensaje);
+        }
     }
 }
