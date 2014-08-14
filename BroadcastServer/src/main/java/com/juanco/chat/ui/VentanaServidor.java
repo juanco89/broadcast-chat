@@ -1,6 +1,7 @@
 
 package com.juanco.chat.ui;
 
+import com.juanco.chat.Global;
 import com.juanco.chat.controlador.Controlador;
 import com.juanco.chat.observador.ObservadorServidor;
 import java.awt.Container;
@@ -24,8 +25,6 @@ import javax.swing.JTextField;
  * @author Juan C. Orozco <juanco89@gmail.com>
  */
 public class VentanaServidor extends javax.swing.JFrame implements ObservadorServidor {
-
-    private static final String PUERTO_DEFAULT = "6655";
     
     public VentanaServidor(Controlador c) {
         initComponents();
@@ -53,7 +52,7 @@ public class VentanaServidor extends javax.swing.JFrame implements ObservadorSer
         
         Box contenedorConfig = Box.createHorizontalBox();
         contenedorConfig.add(new JLabel("Puerto: "));
-        txPuerto = new JTextField(PUERTO_DEFAULT);
+        txPuerto = new JTextField(Global.PUERTO_DEFAULT);
         txPuerto.setPreferredSize(new Dimension(this.getWidth() / 2, 30));
         txPuerto.setMinimumSize(txPuerto.getPreferredSize());
         txPuerto.setMaximumSize(txPuerto.getPreferredSize());
