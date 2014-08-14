@@ -26,7 +26,7 @@ public class AsistenteServidor implements Runnable {
     private DataInputStream in;
     private DataOutputStream out;
     
-    private Servidor servidor;
+    private final Servidor servidor;
     
     public AsistenteServidor(Socket socket, Servidor padre) {
         this.socket = socket;
@@ -50,8 +50,13 @@ public class AsistenteServidor implements Runnable {
                 if(servidor != null) servidor.difundirMensaje(mensaje, this);
             } catch (IOException ex) {
                 Logg.registrar(ex.getMessage());
-                if(ex instanceof EOFException)
+                if(ex instanceof EOFException) {
+                    try {
+                        socket.close();
+                    } catch (IOException ex1) { }
+                    servidor.eliminarClienteConectado(this);
                     break;
+                }
             }
         }
     }

@@ -2,6 +2,7 @@
 package com.juanco.chat.ui;
 
 import com.juanco.chat.controlador.Controlador;
+import com.juanco.chat.observador.ObservadorServidor;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -22,7 +23,7 @@ import javax.swing.JTextField;
  * 
  * @author Juan C. Orozco <juanco89@gmail.com>
  */
-public class VentanaServidor extends javax.swing.JFrame {
+public class VentanaServidor extends javax.swing.JFrame implements ObservadorServidor {
 
     private static final String PUERTO_DEFAULT = "6655";
     
@@ -74,6 +75,26 @@ public class VentanaServidor extends javax.swing.JFrame {
         txSalida = new JTextArea();
         txSalida.setBorder(BorderFactory.createEtchedBorder());
         contenedor.add(txSalida);
+    }
+    
+    @Override
+    public void servidorIniciado() {
+    }
+    
+    @Override
+    public void nuevoClienteConectado() {
+    }
+    
+    @Override
+    public void nuevoMensajeRecibido() {
+    }
+    
+    @Override
+    public void conexionTerminada() {
+    }
+    
+    @Override
+    public void clienteDesconectado() {
     }
     
     @SuppressWarnings("unchecked")

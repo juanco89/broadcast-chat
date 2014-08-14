@@ -23,6 +23,7 @@ public class Controlador {
     public boolean iniciarServidor(int puerto) {
         if(servidor == null || !servidor.isAlive()) {
             servidor = new Servidor(puerto);
+            servidor.establecerObservador(vista);
             servidor.start();
             return servidor.isServerRunning();
         }

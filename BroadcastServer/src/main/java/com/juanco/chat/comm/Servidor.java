@@ -1,7 +1,7 @@
 
 package com.juanco.chat.comm;
 
-import com.juanco.chat.observador.ObsevadorServidor;
+import com.juanco.chat.observador.ObservadorServidor;
 import com.juanco.chat.util.Logg;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,9 +19,9 @@ public class Servidor extends Thread {
     private final int puerto;
     private boolean alive;
     private ServerSocket servidor;
-    private List<AsistenteServidor> clientesConectados;
+    private final List<AsistenteServidor> clientesConectados;
     
-    private ObsevadorServidor observador;
+    private ObservadorServidor observador;
     
     public Servidor(int puerto) {
         this.puerto = puerto;
@@ -32,6 +32,7 @@ public class Servidor extends Thread {
         alive = false;
         try {
             servidor.close();
+            if(observador != null) observador.conexionTerminada();
             Logg.registrar("[*] Deteniendo el servidor");
         } catch (IOException ex) { }
     }
@@ -41,6 +42,7 @@ public class Servidor extends Thread {
         try {
             servidor = new ServerSocket(this.puerto);
             alive = true;
+            if(observador != null) observador.servidorIniciado();
             Logg.registrar("[*] Servidor corriendo en el puerto " + this.puerto);
         } catch(IOException e) {
             Logg.registrar(e.getLocalizedMessage());
@@ -51,6 +53,7 @@ public class Servidor extends Thread {
             try {
                 Socket cliente = servidor.accept();
                 Logg.registrar("[*] Cliente conectado");
+                if(observador != null) observador.nuevoClienteConectado();
                 
                 // Se crea hilo de escucha para el nuevo socket cliente.
                 AsistenteServidor asistente = new AsistenteServidor(cliente, this);
@@ -65,25 +68,30 @@ public class Servidor extends Thread {
         }
         
         // Liberar recursos
-        try {
-            servidor.close();
-        } catch (IOException e) {
-            Logg.registrar(e.getLocalizedMessage());
-        }
+        detener();
     }
     
     public boolean isServerRunning() {
         return (servidor != null && !servidor.isClosed());
     }
     
-    public void establecerObservador(ObsevadorServidor pObservador) {
+    public void establecerObservador(ObservadorServidor pObservador) {
         this.observador = pObservador;
     }
     
     public void difundirMensaje(String mensaje, AsistenteServidor sender) {
         for(AsistenteServidor asistente: clientesConectados) {
-            if(asistente != sender)
+            if(asistente != sender) {
                 asistente.enviar(mensaje);
+                if(observador != null) observador.nuevoMensajeRecibido();
+            }
+        }
+    }
+    
+    public void eliminarClienteConectado(AsistenteServidor asistente) {
+        if(asistente != null) {
+            clientesConectados.remove(asistente);
+            if(observador != null) observador.clienteDesconectado();
         }
     }
 }
