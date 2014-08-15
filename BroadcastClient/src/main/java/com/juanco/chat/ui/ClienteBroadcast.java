@@ -10,6 +10,9 @@ import java.awt.Dimension;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -85,6 +88,7 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
         btEnviar.addActionListener(accionEnviar);
         txMensaje = new JTextField();
         txMensaje.setMaximumSize(new Dimension(this.getHeight() - btEnviar.getHeight(), 30));
+        txMensaje.addKeyListener(accionAtajoMensaje);
         contMsn.add(txMensaje);
         contMsn.add(Box.createHorizontalStrut(50));
         contMsn.add(btEnviar);
@@ -179,6 +183,16 @@ public class ClienteBroadcast extends javax.swing.JFrame implements ObservadorCo
                 controlador.enviarMensaje(txMensaje.getText());
                 txConsola.append("+ [Yo]: " + txMensaje.getText() + "\n");
                 txMensaje.setText("");
+                txMensaje.requestFocus();
+            }
+        }
+    };
+    
+    private final KeyListener accionAtajoMensaje = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                btEnviar.doClick();
             }
         }
     };
