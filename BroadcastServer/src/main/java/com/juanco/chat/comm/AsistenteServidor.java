@@ -50,7 +50,7 @@ public class AsistenteServidor implements Runnable {
     
     @Override
     public void run() {
-        while(socket.isConnected() && !socket.isInputShutdown()) {
+        while(!socket.isClosed() && !socket.isInputShutdown()) {
             try {
                 String mensaje = in.readUTF();
                 Logg.registrar(nickname + " dice: " + mensaje);
@@ -61,11 +61,11 @@ public class AsistenteServidor implements Runnable {
                     try {
                         socket.close();
                     } catch (IOException ex1) { }
-                    servidor.eliminarClienteConectado(this);
                     break;
                 }
             }
         }
+        servidor.eliminarClienteConectado(this);
     }
     
     public void detener() {
