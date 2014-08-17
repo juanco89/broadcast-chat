@@ -7,6 +7,8 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Procesa las solicitudes de un cliente conectado.
@@ -62,6 +64,18 @@ public class AsistenteServidor implements Runnable {
                     servidor.eliminarClienteConectado(this);
                     break;
                 }
+            }
+        }
+    }
+    
+    public void detener() {
+        if(socket.isConnected()) {
+            try {
+                in.close();
+                out.close();
+                socket.close();
+            } catch (IOException ex) { 
+                Logg.registrar(ex.getLocalizedMessage());
             }
         }
     }

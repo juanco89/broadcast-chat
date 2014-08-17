@@ -32,6 +32,10 @@ public class Servidor extends Thread {
         alive = false;
         try {
             servidor.close();
+            // Detener los asistentes.
+            for(AsistenteServidor a: clientesConectados)
+                a.detener();
+            
             if(observador != null) observador.conexionTerminada();
             Logg.registrar("[*] Deteniendo el servidor");
         } catch (IOException ex) { }
